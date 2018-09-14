@@ -18,7 +18,6 @@ let
     librsvg
     python
     pandoc
-    texlive.combined.scheme-full
     haskellPackages.pandoc-citeproc
     zsh
   ];
@@ -27,14 +26,14 @@ let
     wrapProgram $out/bin/pandoc --add-flags --help
   '';
 
-  inputs = nixpkgs;
+  inputs = nixpkgs ++ [latex];
 
   shell = pkgs.mkShell{name = "pandoc-shell"; buildInputs=inputs; shellHook="export SHELL=${pkgs.zsh}/bin/zsh "; };
   env = buildEnv {
     name = "pandoc-env";
     paths = inputs;
     buildInputs=[pkgs.makeWrapper];
-    postBuild=fixes; };
+    postBuild=""; };
 
 in {
   inherit env;
