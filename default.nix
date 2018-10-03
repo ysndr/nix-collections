@@ -8,6 +8,8 @@ let
       pandoc = callPackage ./pandoc-env { pkgs = pkgs; };
       python = callPackage ./python-env { pkgs = pkgs; };
       rust = callPackage ./rust-env {  pkgs = pkgs; };
+      php = callPackage ./php-env {  pkgs = pkgs; };
+      bluredbreeze = libsForQt5.callPackage ./breeze-blur.nix { };
       inherit pkgs;
 
   };
