@@ -1,6 +1,8 @@
-{pkgs ? import <nixpkgs> {
-  inherit system;
-}, system ? builtins.currentSystem, stdenv}:
+{
+  system ? builtins.currentSystem,
+  pkgs ? import <nixpkgs> {inherit system;},
+  stdenv, collections, collectionWith
+}:
 
 with pkgs;
 let
@@ -21,13 +23,6 @@ let
     binutils.bintools
   ];
 
-  inputs = rust_set ++ progs;
-  shell = pkgs.mkShell{name = "rust-shell"; buildInputs=inputs; shellHook="";};
-  env = buildEnv { name = "rust-env" ; paths = inputs; postBuild="export BAR='foo'"; };
-  test = runCommand "test" {shellHook="export BAR=foo; echo 'hello'";} "echo here";
-in
- {
-   inherit shell;
-   inherit env;
-   inherit test;
- }
+in {
+  env = collectionWith { name="rust"; inputs = progs ++ rust_set; };
+}

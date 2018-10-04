@@ -1,6 +1,8 @@
-{pkgs ? import <nixpkgs> {
-  inherit system;
-}, system ? builtins.currentSystem, stdenv}:
+{
+  system ? builtins.currentSystem,
+  pkgs ? import <nixpkgs> {inherit system;},
+  stdenv, collections, collectionWith
+}:
 
 with pkgs;
 let
@@ -18,10 +20,8 @@ let
     ]);
 
   inputs = php-progs ++ progs;
-  shell = pkgs.mkShell{name = "php-shell"; buildInputs=inputs; shellHook="";};
-  env = buildEnv { name = "php-env" ; paths = inputs; postBuild="export BAR='foo'"; };
+
 in
  {
-   inherit shell;
-   inherit env;
+   env = collectionWith { name="php"; inherit inputs; };
  }

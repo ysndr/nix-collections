@@ -1,9 +1,12 @@
-{pkgs ? import <nixpkgs> {
-  inherit system;
-}, system ? builtins.currentSystem}:
+{
+  system ? builtins.currentSystem,
+  pkgs ? import <nixpkgs> {inherit system;},
+  stdenv, collections, collectionWith
+}:
 
 with pkgs;
 let
+
   latex = texlive.combine {
     inherit (texlive) scheme-small
     collection-langgerman
@@ -17,7 +20,6 @@ let
   # python = python3.withPackages env-python-packages;
 
   nixpkgs = [
-
     # nodejs
     vscode
     librsvg
@@ -33,16 +35,12 @@ let
 
   inputs = nixpkgs ++ [latex];
 
-  shell = mkShell{name = "pandoc-shell"; buildInputs=inputs; shellHook="export SHELL=${pkgs.zsh}/bin/zsh "; };
-  env = buildEnv {
-    name = "pandoc-env";
-    paths = inputs;
-    buildInputs=[pkgs.makeWrapper];
-    postBuild=""; };
-
 in {
-  inherit env;
-  inherit shell;
+  env = collectionWith {
+    name = "LaTeX";
+    inherit inputs;
+  };
+  inherit latex;
 }
 
 
